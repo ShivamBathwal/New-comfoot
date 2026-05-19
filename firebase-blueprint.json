@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the Comfoot app.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique ID of the user." },
+        "email": { "type": "string", "format": "email", "description": "The email of the user." },
+        "displayName": { "type": "string", "description": "The display name of the user." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the user was created." }
+      },
+      "required": ["uid", "email"]
+    },
+    "JournalEntry": {
+      "title": "Journal Entry",
+      "description": "A daily log of foot health and symptoms.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The ID of the user who created this entry." },
+        "date": { "type": "string", "format": "date", "description": "The date of the entry." },
+        "painLevel": { "type": "integer", "description": "Pain level from 0 to 10." },
+        "symptoms": { "type": "array", "items": { "type": "string" }, "description": "List of symptoms experienced." },
+        "notes": { "type": "string", "description": "Additional notes or observations." },
+        "activityLevel": { "type": "string", "enum": ["low", "moderate", "high"], "description": "Activity level for the day." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the entry was created." }
+      },
+      "required": ["userId", "date", "painLevel"]
+    },
+    "ProductFeedback": {
+      "title": "Product Feedback",
+      "description": "User feedback on product recommendations.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The ID of the user who provided feedback." },
+        "productId": { "type": "string", "description": "The name or ID of the product." },
+        "conditionId": { "type": "string", "description": "The ID of the condition the product was recommended for." },
+        "rating": { "type": "integer", "description": "Rating from 1 to 5." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the feedback was created." }
+      },
+      "required": ["userId", "productId", "rating", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles."
+    },
+    "/users/{userId}/journal": {
+      "schema": "JournalEntry",
+      "description": "User's foot health journal entries."
+    },
+    "/productFeedback/{feedbackId}": {
+      "schema": "ProductFeedback",
+      "description": "Global product feedback collection."
+    }
+  }
+}

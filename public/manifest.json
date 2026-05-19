@@ -1,0 +1,16 @@
+{
+  "name": "Comfoot | Science-First Foot Wellness",
+  "short_name": "Comfoot",
+  "description": "Premium footwear diagnostics and orthopaedic wellness platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FCF9F6",
+  "theme_color": "#FF6321",
+  "icons": [
+    {
+      "src": "https://ais-dev-imlmqzganriwebenv6qvu3-348819014642.asia-east1.run.app/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

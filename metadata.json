@@ -1,0 +1,8 @@
+{
+  "name": "Comfoot | Science-First Foot Wellness",
+  "description": "Premium footwear diagnostics and orthopaedic wellness platform for the urban explorer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

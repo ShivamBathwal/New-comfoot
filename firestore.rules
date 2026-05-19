@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "prabalagrawal23@gmail.com" && request.auth.token.email_verified == true));
+    }
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    function hasOnlyAllowedFields(allowedFields) {
+      let keys = request.resource.data.keys();
+      return keys.hasAll(allowedFields) && keys.size() == allowedFields.size();
+    }
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'createdAt', 'role']) &&
+             data.uid is string && data.uid.size() > 0 &&
+             isValidEmail(data.email) &&
+             (data.displayName == null || (data.displayName is string && data.displayName.size() < 100)) &&
+             (data.role == null || data.role in ['admin', 'user']);
+    }
+
+    function isValidJournalEntry(data) {
+      return hasOnlyAllowedFields(['userId', 'date', 'painLevel', 'symptoms', 'notes', 'activityLevel', 'createdAt']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.date is string && data.date.matches("^\\d{4}-\\d{2}-\\d{2}$") &&
+             data.painLevel is int && data.painLevel >= 0 && data.painLevel <= 10 &&
+             (data.symptoms == null || data.symptoms is list) &&
+             (data.notes == null || (data.notes is string && data.notes.size() < 1000)) &&
+             (data.activityLevel == null || data.activityLevel in ['low', 'moderate', 'high']);
+    }
+
+    function isValidProductFeedback(data) {
+      return hasOnlyAllowedFields(['userId', 'productId', 'conditionId', 'rating', 'createdAt']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.productId is string && data.productId.size() > 0 &&
+             data.conditionId is string && data.conditionId.size() > 0 &&
+             data.rating is int && data.rating >= 1 && data.rating <= 5 &&
+             data.createdAt is string;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.role == null || request.resource.data.role == 'user');
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && (request.resource.data.role == resource.data.role || isAdmin());
+
+      match /journal/{entryId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidJournalEntry(request.resource.data);
+        allow update: if isOwner(userId) && isValidJournalEntry(request.resource.data);
+        allow delete: if isOwner(userId) || isAdmin();
+      }
+
+      match /quizResults/{resultId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    match /productFeedback/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated() && isValidProductFeedback(request.resource.data);
+    }
+
+    match /feedback/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if true;
+    }
+
+    match /emails/{email} {
+      allow read: if isAdmin();
+      allow create: if true;
+    }
+
+    match /leads/{leadId} {
+      allow read: if isAdmin();
+      allow create: if true;
+    }
+
+    match /quiz_results/{resultId} {
+      allow read: if isAdmin();
+      allow create: if true;
+    }
+
+    // Allow connection test
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}
