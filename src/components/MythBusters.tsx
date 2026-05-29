@@ -223,32 +223,6 @@ export const MythBusters: React.FC = () => {
           ))}
         </div>
 
-        {/* CTA Block */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-24 md:mt-32 bg-brand-brown rounded-[3rem] p-10 md:p-16 text-center relative overflow-hidden shadow-2xl group hover:scale-[1.02] transition-transform duration-500"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-orange/10 rounded-full -ml-32 -mb-32 blur-3xl" />
-          
-          <div className="relative z-10">
-            <h3 className="text-3xl md:text-4xl font-display font-bold text-brand-beige mb-6">
-              Still unsure about your foot health?
-            </h3>
-            <p className="text-brand-beige/70 mb-10 max-w-xl mx-auto font-light">
-              Take our structured assessment to identify potential issues and get personalized recommendations.
-            </p>
-            <a
-              href="#quiz"
-              className="inline-flex items-center gap-3 bg-brand-orange text-white px-10 py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-brand-orange/90 transition-all shadow-xl hover:shadow-brand-orange/20 active:scale-95"
-            >
-              Start Your Assessment <ArrowRight className="w-5 h-5" />
-            </a>
-          </div>
-        </motion.div>
-
         {/* Disclaimer */}
         <div className="mt-12 text-center">
           <p className="text-[10px] md:text-xs text-brand-taupe/50 max-w-2xl mx-auto leading-relaxed italic">
